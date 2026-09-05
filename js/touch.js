@@ -24,8 +24,9 @@ export function setupTouch(input) {
       dy *= MAX / len;
     }
     knob.style.transform = `translate(${dx}px, ${dy}px)`;
-    input.move.x = dx / MAX;
-    input.move.y = -dy / MAX;
+    // Screen up (negative dy) is forward.
+    input.move.x = (input.invertX ? -1 : 1) * (dx / MAX);
+    input.move.y = (input.invertY ? 1 : -1) * (dy / MAX);
   };
   base.addEventListener('touchstart', (e) => {
     e.preventDefault();
@@ -70,7 +71,7 @@ export function setupTouch(input) {
     for (const t of e.changedTouches) {
       if (t.identifier !== lookId) continue;
       input.mouseDX += (t.clientX - last.x) * LOOK_GAIN;
-      input.mouseDY += (t.clientY - last.y) * LOOK_GAIN;
+      input.mouseDY += (t.clientY - last.y) * LOOK_GAIN * (input.invertLook ? -1 : 1);
       last = { x: t.clientX, y: t.clientY };
     }
   }, { passive: false });
