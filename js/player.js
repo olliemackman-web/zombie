@@ -190,12 +190,15 @@ export class Player {
     if (input.down('KeyS') || input.down('ArrowDown')) move.sub(fwd);
     if (input.down('KeyD') || input.down('ArrowRight')) move.add(right);
     if (input.down('KeyA') || input.down('ArrowLeft')) move.sub(right);
-    this.moving = move.lengthSq() > 0;
+    // analog joystick (touch)
+    move.addScaledVector(fwd, input.move.y).addScaledVector(right, input.move.x);
+    this.moving = move.lengthSq() > 0.01;
     this.sprinting = this.moving && input.down('ShiftLeft') && this.attackT < 0 && !this.reloading;
 
     if (this.moving) {
+      const mag = Math.min(1, move.length());
       move.normalize();
-      let speed = this.baseSpeed;
+      let speed = this.baseSpeed * mag;
       if (this.sprinting) speed *= 1.55;
       if (this.attackT >= 0) speed *= 0.45;
       if (this.reloading) speed *= 0.8;

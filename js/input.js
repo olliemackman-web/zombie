@@ -7,10 +7,13 @@ export class Input {
     this.mouseDX = 0;
     this.mouseDY = 0;
     this.locked = false;
-    this.forceLocked = false; // debug/testing: treat input as captured without pointer lock
+    this.forceLocked = false; // touch devices / testing: treat input as captured without pointer lock
     this.enabled = false;
     this.pressedThisFrame = new Set();
     this.onLockChange = null;
+    this.onPauseRequest = null;
+    this.touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    this.move = { x: 0, y: 0 }; // analog movement from the touch joystick
 
     window.addEventListener('keydown', (e) => {
       if (!this.enabled) return;

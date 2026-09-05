@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Dead Street — Zombie Survival</title>
   <link rel="stylesheet" href="css/style.css" />
   <script type="importmap">
@@ -68,7 +71,7 @@
 
       <button id="start-btn" class="big">START</button>
 
-      <div class="controls">
+      <div class="controls" id="controls-desktop">
         <div><b>WASD</b> move</div>
         <div><b>Mouse</b> look / aim</div>
         <div><b>Click</b> attack / shoot</div>
@@ -76,6 +79,12 @@
         <div><b>E</b> open chest</div>
         <div><b>1–5 / Q</b> switch weapon</div>
         <div><b>R</b> reload</div>
+      </div>
+      <div class="controls hidden" id="controls-touch">
+        <div><b>Left stick</b> move</div>
+        <div><b>Drag right side</b> look / aim</div>
+        <div><b>Red button</b> attack / shoot</div>
+        <div><b>Turn your phone sideways</b> for the best view</div>
       </div>
     </div>
   </div>
@@ -117,6 +126,18 @@
     <div id="damage-vignette"></div>
   </div>
 
+  <!-- ===== Touch controls (shown on touch devices only) ===== -->
+  <div id="touch-ui" class="hidden">
+    <div id="look-area"></div>
+    <div id="joystick"><div id="joystick-knob"></div></div>
+    <button id="btn-pause" class="tbtn small">II</button>
+    <button id="btn-fire" class="tbtn fire">FIRE</button>
+    <button id="btn-interact" class="tbtn">OPEN</button>
+    <button id="btn-swap" class="tbtn">SWAP</button>
+    <button id="btn-reload" class="tbtn">RELOAD</button>
+    <button id="btn-sprint" class="tbtn">RUN</button>
+  </div>
+
   <!-- ===== Game over ===== -->
   <div id="gameover" class="overlay hidden">
     <div class="panel">
@@ -130,7 +151,7 @@
   <div id="paused" class="overlay hidden">
     <div class="panel">
       <h1>PAUSED</h1>
-      <p>Click to resume</p>
+      <p id="paused-hint">Click to resume</p>
     </div>
   </div>
 

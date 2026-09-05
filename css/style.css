@@ -8,6 +8,10 @@ html, body {
   font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
   color: #e6e6e6;
   user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
 }
 
 #game {
@@ -332,3 +336,128 @@ button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #700a0d; }
 }
 
 #loading-text { color: #aaa; }
+
+/* ---------- Touch controls ---------- */
+#touch-ui {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+#touch-ui > * { pointer-events: auto; }
+
+#look-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 55%;
+}
+
+#joystick {
+  position: absolute;
+  left: 34px;
+  bottom: 120px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+#joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.tbtn {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  color: #eee;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tbtn.down { background: rgba(255, 255, 255, 0.3); }
+.tbtn.active { border-color: #e0b040; color: #e0b040; background: rgba(224, 176, 64, 0.2); }
+.tbtn.fire {
+  right: 30px;
+  bottom: 110px;
+  width: 96px;
+  height: 96px;
+  font-size: 16px;
+  border-color: rgba(224, 42, 48, 0.8);
+  background: rgba(200, 20, 26, 0.45);
+}
+.tbtn.fire.down { background: rgba(224, 42, 48, 0.85); }
+#btn-interact {
+  right: 150px;
+  bottom: 190px;
+  opacity: 0.35;
+  border-color: rgba(224, 176, 64, 0.5);
+}
+#btn-interact.available {
+  opacity: 1;
+  color: #e0b040;
+  border-color: #e0b040;
+  background: rgba(224, 176, 64, 0.25);
+  box-shadow: 0 0 16px rgba(224, 176, 64, 0.5);
+}
+#btn-swap { right: 150px; bottom: 100px; }
+#btn-reload { right: 46px; bottom: 222px; }
+#btn-sprint { left: 190px; bottom: 140px; }
+#btn-pause.small {
+  top: 14px;
+  left: 50%;
+  margin-left: -22px;
+  width: 44px;
+  height: 44px;
+  font-size: 14px;
+}
+
+/* On touch devices the HUD moves up so it doesn't sit under the thumbs:
+   health/weapon panels share the top row with WAVE / KILLS in landscape. */
+body.touch #hud-bottom { bottom: auto; top: 12px; padding: 0 124px; align-items: flex-start; }
+body.touch #health-box { width: 190px; padding: 8px 12px; }
+body.touch #weapon-box { min-width: 150px; padding: 8px 12px; }
+body.touch #weapon-name { font-size: 16px; }
+body.touch #ammo-text { font-size: 13px; }
+body.touch #wave-msg { margin-top: 110px; font-size: 26px; }
+body.touch #pickup-toast { top: 170px; font-size: 16px; padding: 8px 18px; }
+body.touch #prompt { display: none !important; }
+body.touch #hud-top { padding: 0 16px; top: 12px; }
+body.touch #wave-box, body.touch #kill-box { min-width: 84px; padding: 6px 12px; }
+body.touch #wave-num, body.touch #kill-num { font-size: 24px; }
+@media (orientation: portrait) {
+  body.touch #hud-bottom { top: 80px; padding: 0 16px; }
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 760px), (max-height: 520px) {
+  .panel, .panel.wide { min-width: 0; width: 94vw; padding: 18px 16px; max-height: 94vh; overflow-y: auto; }
+  h1 { font-size: 30px; letter-spacing: 4px; }
+  .sub { margin-bottom: 14px; font-size: 13px; }
+  .row { gap: 14px; margin-bottom: 14px; }
+  .choice { min-width: 0; flex: 1; padding: 7px 10px; }
+  .choice .name { font-size: 14px; }
+  .choice .desc { font-size: 10px; }
+  .group { flex: 1; }
+  button.big { font-size: 17px; padding: 10px 36px; }
+  .controls { margin-top: 12px; gap: 5px 14px; font-size: 11px; }
+}
+@media (max-width: 480px) {
+  .row { flex-direction: column; }
+}

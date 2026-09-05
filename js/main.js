@@ -5,6 +5,7 @@ import { Player } from './player.js';
 import { Zombie } from './zombie.js';
 import { Companion } from './companion.js';
 import { Input } from './input.js';
+import { setupTouch } from './touch.js';
 import { FX } from './fx.js';
 import { ui } from './ui.js';
 import { WEAPONS, CHEST_WEAPONS } from './weapons.js';
@@ -24,6 +25,19 @@ const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerH
 const input = new Input(canvas);
 const fx = new FX(scene);
 const clock = new THREE.Clock();
+
+// Touch devices: no pointer lock, on-screen controls, lighter rendering.
+const IS_TOUCH = input.touch;
+let touchUI = null;
+if (IS_TOUCH) {
+  input.forceLocked = true;
+  document.body.classList.add('touch');
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+  touchUI = setupTouch(input);
+  document.getElementById('controls-desktop').classList.add('hidden');
+  document.getElementById('controls-touch').classList.remove('hidden');
+  document.getElementById('paused-hint').textContent = 'Tap to resume';
+}
 
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -54,7 +68,7 @@ class Game {
     this.camForward = new THREE.Vector3(0, 0, 1);
     this.recoil = 0;
 
-    this.world = new World(scene);
+    this.world = new World(scene, IS_TOUCH ? { shadowSize: 1024, decorCount: 45 } : {});
     this.world.build();
 
     this.player = new Player({
@@ -267,6 +281,7 @@ class Game {
     const p = this.player;
     const chest = this.world.nearestClosedChest(p.pos, 2.4);
     ui.setPrompt(chest && p.alive ? 'Press <b>E</b> to open chest' : null);
+    touchUI?.setInteract(!!chest && p.alive);
     if (chest && p.alive && input.pressed('KeyE')) {
       const c = chest.open();
       chest.openedAt = this.time;
@@ -390,6 +405,7 @@ class Game {
       );
       input.enabled = false;
       input.releaseLock();
+      touchUI?.reset();
     }
   }
 
@@ -429,7 +445,14 @@ function startGame() {
   game = new Game({ ...config });
   paused = false;
   input.enabled = true;
-  input.requestLock();
+  touchUI?.reset();
+  if (!IS_TOUCH) input.requestLock();
+}
+
+function resume() {
+  paused = false;
+  ui.hide('paused');
+  clock.getDelta(); // drop the paused interval
 }
 
 function backToMenu() {
@@ -449,9 +472,18 @@ input.onLockChange = (locked) => {
     paused = true;
     ui.show('paused');
   } else {
-    paused = false;
-    ui.hide('paused');
-    clock.getDelta(); // drop the paused interval
+    resume();
+  }
+};
+
+input.onPauseRequest = () => {
+  if (!game || game.over) return;
+  if (paused) resume();
+  else {
+    paused = true;
+    touchUI?.reset();
+    input.mouseDown = false;
+    ui.show('paused');
   }
 };
 
@@ -481,9 +513,12 @@ async function boot() {
   bindChoices('comp-choices', 'comp', (v) => (config.companion = v));
   ui.els['start-btn'].addEventListener('click', startGame);
   ui.els['restart-btn'].addEventListener('click', backToMenu);
-  // The pause overlay sits on top of the canvas, so clicking it must re-capture the mouse.
+  // The pause overlay sits on top of the canvas, so clicking it must re-capture the mouse
+  // (desktop) or simply resume (touch).
   ui.els['paused'].addEventListener('click', () => {
-    if (game && !game.over) input.requestLock();
+    if (!game || game.over) return;
+    if (IS_TOUCH) resume();
+    else input.requestLock();
   });
 
   try {

@@ -176,8 +176,10 @@ export class Chest {
 
 /* ------------------------------------------------------------------- world */
 export class World {
-  constructor(scene) {
+  constructor(scene, opts = {}) {
     this.scene = scene;
+    this.shadowSize = opts.shadowSize ?? 2048;
+    this.decorCount = opts.decorCount ?? 70;
     this.group = new THREE.Group();
     scene.add(this.group);
     this.obstacles = [];
@@ -202,7 +204,7 @@ export class World {
     const moon = new THREE.DirectionalLight(0xb0bce8, 3.0);
     moon.position.set(-25, 40, 18);
     moon.castShadow = true;
-    moon.shadow.mapSize.set(2048, 2048);
+    moon.shadow.mapSize.set(this.shadowSize, this.shadowSize);
     const s = ARENA + 6;
     moon.shadow.camera.left = -s;
     moon.shadow.camera.right = s;
@@ -319,7 +321,7 @@ export class World {
   }
 
   #decor() {
-    for (let i = 0; i < 70; i++) {
+    for (let i = 0; i < this.decorCount; i++) {
       const name = DECOR[Math.floor(Math.random() * DECOR.length)];
       const p = this.randomFreePoint(0.6, [{ x: 0, z: 0, r: 3 }]);
       if (!p) continue;
