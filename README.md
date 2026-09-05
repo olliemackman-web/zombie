@@ -7,8 +7,11 @@ chests scattered around the map.
 
 ## Play
 
-The game is plain static HTML/JS (no build step), but it must be served over HTTP because it
-uses ES modules and loads glTF assets. From the repo root:
+**Play online:** <https://olliemackman-web.github.io/zombie/> — works on desktop (mouse +
+keyboard) and on phones/tablets (on-screen touch controls; turn the device sideways).
+
+To run it locally: the game is plain static HTML/JS (no build step), but it must be served over
+HTTP because it uses ES modules and loads glTF assets. From the repo root:
 
 ```bash
 python3 -m http.server 8000
