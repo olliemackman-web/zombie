@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Dead Street — Zombie Survival</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "./vendor/three.module.js",
+        "three/addons/": "./vendor/addons/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="game"></canvas>
+
+  <!-- ===== Loading ===== -->
+  <div id="loading" class="overlay">
+    <div class="panel">
+      <h1>DEAD STREET</h1>
+      <p id="loading-text">Loading assets…</p>
+      <div class="bar"><div id="loading-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- ===== Main menu ===== -->
+  <div id="menu" class="overlay hidden">
+    <div class="panel wide">
+      <h1>DEAD STREET</h1>
+      <p class="sub">The city is gone. All you've got is a guitar. Make it count.</p>
+
+      <div class="row">
+        <div class="group">
+          <h2>Survivor</h2>
+          <div class="choices" id="char-choices">
+            <button class="choice selected" data-char="Matt">
+              <span class="name">Matt</span>
+              <span class="desc">Tough. +Health</span>
+            </button>
+            <button class="choice" data-char="Lis">
+              <span class="name">Lis</span>
+              <span class="desc">Quick. +Speed</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="group">
+          <h2>Companion</h2>
+          <div class="choices" id="comp-choices">
+            <button class="choice selected" data-comp="dog">
+              <span class="name">Rex</span>
+              <span class="desc">German Shepherd. Fast, bites.</span>
+            </button>
+            <button class="choice" data-comp="survivor">
+              <span class="name" id="other-survivor-name">Lis</span>
+              <span class="desc">Fellow survivor. Fights beside you.</span>
+            </button>
+            <button class="choice" data-comp="none">
+              <span class="name">Nobody</span>
+              <span class="desc">Go it alone.</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button id="start-btn" class="big">START</button>
+
+      <div class="controls" id="controls-desktop">
+        <div><b>WASD</b> move</div>
+        <div><b>Mouse</b> look / aim</div>
+        <div><b>Click</b> attack / shoot</div>
+        <div><b>Shift</b> sprint</div>
+        <div><b>E</b> open chest</div>
+        <div><b>1–5 / Q</b> switch weapon</div>
+        <div><b>R</b> reload</div>
+      </div>
+      <div class="controls hidden" id="controls-touch">
+        <div><b>Left stick</b> move</div>
+        <div><b>Drag right side</b> look / aim</div>
+        <div><b>Red button</b> attack / shoot</div>
+        <div><b>Turn your phone sideways</b> for the best view</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== HUD ===== -->
+  <div id="hud" class="hidden">
+    <div id="hud-top">
+      <div id="wave-box">
+        <div class="label">WAVE</div>
+        <div id="wave-num">1</div>
+      </div>
+      <div id="wave-msg"></div>
+      <div id="kill-box">
+        <div class="label">KILLS</div>
+        <div id="kill-num">0</div>
+      </div>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="health-box">
+        <div class="label">HEALTH</div>
+        <div class="bar"><div id="health-bar"></div></div>
+        <div id="comp-health-row">
+          <div class="label" id="comp-label">REX</div>
+          <div class="bar small"><div id="comp-health-bar"></div></div>
+        </div>
+      </div>
+
+      <div id="weapon-box">
+        <div id="weapon-name">GUITAR</div>
+        <div id="ammo-text">MELEE</div>
+        <div id="weapon-slots"></div>
+      </div>
+    </div>
+
+    <div id="prompt" class="hidden">Press <b>E</b> to open chest</div>
+    <div id="pickup-toast" class="hidden"></div>
+    <div id="crosshair"></div>
+    <div id="damage-vignette"></div>
+  </div>
+
+  <!-- ===== Touch controls (shown on touch devices only) ===== -->
+  <div id="touch-ui" class="hidden">
+    <div id="look-area"></div>
+    <div id="joystick"><div id="joystick-knob"></div></div>
+    <button id="btn-pause" class="tbtn small">II</button>
+    <button id="btn-fire" class="tbtn fire">FIRE</button>
+    <button id="btn-interact" class="tbtn">OPEN</button>
+    <button id="btn-swap" class="tbtn">SWAP</button>
+    <button id="btn-reload" class="tbtn">RELOAD</button>
+    <button id="btn-sprint" class="tbtn">RUN</button>
+  </div>
+
+  <!-- ===== Game over ===== -->
+  <div id="gameover" class="overlay hidden">
+    <div class="panel">
+      <h1 class="red">YOU DIED</h1>
+      <p id="gameover-stats"></p>
+      <button id="restart-btn" class="big">TRY AGAIN</button>
+    </div>
+  </div>
+
+  <!-- ===== Pause hint ===== -->
+  <div id="paused" class="overlay hidden">
+    <div class="panel">
+      <h1>PAUSED</h1>
+      <p id="paused-hint">Click to resume</p>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

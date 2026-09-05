@@ -1,0 +1,463 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #060608;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: #e6e6e6;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#game {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hidden { display: none !important; }
+
+/* ---------- Overlays ---------- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, rgba(20, 8, 8, 0.85), rgba(0, 0, 0, 0.95));
+  z-index: 10;
+}
+
+.panel {
+  background: rgba(14, 12, 12, 0.92);
+  border: 1px solid #3a2a2a;
+  border-radius: 8px;
+  padding: 36px 44px;
+  min-width: 380px;
+  max-width: 92vw;
+  text-align: center;
+  box-shadow: 0 0 60px rgba(120, 0, 0, 0.35);
+}
+.panel.wide { min-width: 640px; }
+
+h1 {
+  font-size: 52px;
+  letter-spacing: 8px;
+  font-weight: 900;
+  color: #c8141a;
+  text-shadow: 0 0 22px rgba(200, 20, 26, 0.6), 2px 2px 0 #000;
+  margin-bottom: 8px;
+}
+h1.red { color: #e0201a; }
+
+h2 {
+  font-size: 14px;
+  letter-spacing: 3px;
+  color: #999;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.sub {
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 26px;
+}
+
+.row {
+  display: flex;
+  gap: 40px;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.choice {
+  background: #1c1818;
+  border: 2px solid #3a3030;
+  border-radius: 6px;
+  color: #ddd;
+  padding: 10px 18px;
+  min-width: 220px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.12s;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.choice:hover { border-color: #7a3030; background: #241c1c; }
+.choice.selected {
+  border-color: #c8141a;
+  background: #2a1414;
+  box-shadow: 0 0 14px rgba(200, 20, 26, 0.35);
+}
+.choice .name { font-weight: 700; font-size: 17px; }
+.choice .desc { font-size: 12px; color: #999; }
+
+button.big {
+  background: #c8141a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  padding: 14px 60px;
+  cursor: pointer;
+  transition: all 0.12s;
+  box-shadow: 0 4px 0 #700a0d;
+}
+button.big:hover { background: #e01a20; transform: translateY(-1px); }
+button.big:active { transform: translateY(3px); box-shadow: 0 1px 0 #700a0d; }
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  justify-content: center;
+  margin-top: 26px;
+  font-size: 12px;
+  color: #888;
+}
+.controls b { color: #ddd; }
+
+.bar {
+  height: 14px;
+  background: #2a1a1a;
+  border: 1px solid #4a2a2a;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bar > div {
+  height: 100%;
+  background: linear-gradient(90deg, #a01015, #e02a30);
+  width: 100%;
+  transition: width 0.15s;
+}
+.bar.small { height: 8px; }
+.bar.small > div { background: linear-gradient(90deg, #3a80c0, #60b0f0); }
+
+#loading .bar { margin-top: 14px; }
+#loading-bar { width: 0%; }
+
+/* ---------- HUD ---------- */
+#hud {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #999;
+  font-weight: 700;
+}
+
+#hud-top {
+  position: absolute;
+  top: 18px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0 26px;
+}
+
+#wave-box, #kill-box {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid #3a2a2a;
+  border-radius: 6px;
+  padding: 8px 16px;
+  text-align: center;
+  min-width: 90px;
+}
+#wave-num, #kill-num {
+  font-size: 30px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+}
+#wave-num { color: #e02a30; }
+
+#wave-msg {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: #e02a30;
+  text-shadow: 0 0 20px rgba(200, 20, 26, 0.7), 2px 2px 0 #000;
+  opacity: 0;
+  transition: opacity 0.4s;
+  align-self: center;
+  margin-top: 40px;
+}
+#wave-msg.show { opacity: 1; }
+
+#hud-bottom {
+  position: absolute;
+  bottom: 22px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: 0 26px;
+}
+
+#health-box {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid #3a2a2a;
+  border-radius: 6px;
+  padding: 10px 16px;
+  width: 280px;
+}
+#health-box .bar { margin-top: 4px; }
+#comp-health-row { margin-top: 8px; }
+#comp-health-row.hidden { display: none; }
+
+#weapon-box {
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid #3a2a2a;
+  border-radius: 6px;
+  padding: 10px 16px;
+  text-align: right;
+  min-width: 200px;
+}
+#weapon-name {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: #fff;
+}
+#ammo-text {
+  font-size: 16px;
+  color: #e0b040;
+  font-weight: 700;
+  margin-top: 2px;
+}
+#ammo-text.empty { color: #e02a30; }
+
+#weapon-slots {
+  display: flex;
+  gap: 5px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.slot {
+  width: 30px;
+  height: 22px;
+  border: 1px solid #3a3030;
+  border-radius: 3px;
+  background: #151212;
+  font-size: 10px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.slot.owned { color: #ccc; border-color: #666; }
+.slot.active { color: #fff; border-color: #e02a30; background: #3a1414; }
+
+#prompt {
+  position: absolute;
+  bottom: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid #e0b040;
+  border-radius: 6px;
+  padding: 8px 18px;
+  font-size: 15px;
+  color: #eee;
+}
+#prompt b { color: #e0b040; }
+
+#pickup-toast {
+  position: absolute;
+  top: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  border: 1px solid #e0b040;
+  border-radius: 6px;
+  padding: 10px 24px;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #e0b040;
+  animation: toast 2.2s forwards;
+}
+@keyframes toast {
+  0% { opacity: 0; transform: translate(-50%, 10px); }
+  12% { opacity: 1; transform: translate(-50%, 0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+#crosshair {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 4px #000;
+}
+
+#damage-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(180, 0, 0, 0.55) 100%);
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+#gameover-stats {
+  color: #bbb;
+  margin: 12px 0 26px;
+  line-height: 1.6;
+}
+
+#loading-text { color: #aaa; }
+
+/* ---------- Touch controls ---------- */
+#touch-ui {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+#touch-ui > * { pointer-events: auto; }
+
+#look-area {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 55%;
+}
+
+#joystick {
+  position: absolute;
+  left: 34px;
+  bottom: 120px;
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+}
+#joystick-knob {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 56px;
+  height: 56px;
+  margin: -28px 0 0 -28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.35);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+}
+
+.tbtn {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  background: rgba(0, 0, 0, 0.45);
+  color: #eee;
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 1px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tbtn.down { background: rgba(255, 255, 255, 0.3); }
+.tbtn.active { border-color: #e0b040; color: #e0b040; background: rgba(224, 176, 64, 0.2); }
+.tbtn.fire {
+  right: 30px;
+  bottom: 110px;
+  width: 96px;
+  height: 96px;
+  font-size: 16px;
+  border-color: rgba(224, 42, 48, 0.8);
+  background: rgba(200, 20, 26, 0.45);
+}
+.tbtn.fire.down { background: rgba(224, 42, 48, 0.85); }
+#btn-interact {
+  right: 150px;
+  bottom: 190px;
+  opacity: 0.35;
+  border-color: rgba(224, 176, 64, 0.5);
+}
+#btn-interact.available {
+  opacity: 1;
+  color: #e0b040;
+  border-color: #e0b040;
+  background: rgba(224, 176, 64, 0.25);
+  box-shadow: 0 0 16px rgba(224, 176, 64, 0.5);
+}
+#btn-swap { right: 150px; bottom: 100px; }
+#btn-reload { right: 46px; bottom: 222px; }
+#btn-sprint { left: 190px; bottom: 140px; }
+#btn-pause.small {
+  top: 14px;
+  left: 50%;
+  margin-left: -22px;
+  width: 44px;
+  height: 44px;
+  font-size: 14px;
+}
+
+/* On touch devices the HUD moves up so it doesn't sit under the thumbs:
+   health/weapon panels share the top row with WAVE / KILLS in landscape. */
+body.touch #hud-bottom { bottom: auto; top: 12px; padding: 0 124px; align-items: flex-start; }
+body.touch #health-box { width: 190px; padding: 8px 12px; }
+body.touch #weapon-box { min-width: 150px; padding: 8px 12px; }
+body.touch #weapon-name { font-size: 16px; }
+body.touch #ammo-text { font-size: 13px; }
+body.touch #wave-msg { margin-top: 110px; font-size: 26px; }
+body.touch #pickup-toast { top: 170px; font-size: 16px; padding: 8px 18px; }
+body.touch #prompt { display: none !important; }
+body.touch #hud-top { padding: 0 16px; top: 12px; }
+body.touch #wave-box, body.touch #kill-box { min-width: 84px; padding: 6px 12px; }
+body.touch #wave-num, body.touch #kill-num { font-size: 24px; }
+@media (orientation: portrait) {
+  body.touch #hud-bottom { top: 80px; padding: 0 16px; }
+}
+
+/* ---------- Small screens ---------- */
+@media (max-width: 760px), (max-height: 520px) {
+  .panel, .panel.wide { min-width: 0; width: 94vw; padding: 18px 16px; max-height: 94vh; overflow-y: auto; }
+  h1 { font-size: 30px; letter-spacing: 4px; }
+  .sub { margin-bottom: 14px; font-size: 13px; }
+  .row { gap: 14px; margin-bottom: 14px; }
+  .choice { min-width: 0; flex: 1; padding: 7px 10px; }
+  .choice .name { font-size: 14px; }
+  .choice .desc { font-size: 10px; }
+  .group { flex: 1; }
+  button.big { font-size: 17px; padding: 10px 36px; }
+  .controls { margin-top: 12px; gap: 5px 14px; font-size: 11px; }
+}
+@media (max-width: 480px) {
+  .row { flex-direction: column; }
+}
