@@ -14,6 +14,9 @@ export class Input {
     this.onPauseRequest = null;
     this.touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     this.move = { x: 0, y: 0 }; // analog movement from the touch joystick
+    this.invertX = false; // player-selectable flips for the touch stick / look
+    this.invertY = false;
+    this.invertLook = false;
 
     window.addEventListener('keydown', (e) => {
       if (!this.enabled) return;

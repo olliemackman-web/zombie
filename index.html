@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Dead Street — Zombie Survival</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/style.css?v=2" />
   <script type="importmap">
     {
       "imports": {
@@ -86,6 +86,12 @@
         <div><b>Red button</b> attack / shoot</div>
         <div><b>Turn your phone sideways</b> for the best view</div>
       </div>
+      <div class="options hidden" id="options-touch">
+        <label><input type="checkbox" id="opt-invert-y" /> Flip stick up / down</label>
+        <label><input type="checkbox" id="opt-invert-x" /> Flip stick left / right</label>
+        <label><input type="checkbox" id="opt-invert-look" /> Flip look up / down</label>
+      </div>
+      <div class="version">v1.2</div>
     </div>
   </div>
 
@@ -155,6 +161,6 @@
     </div>
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>

@@ -36,7 +36,25 @@ if (IS_TOUCH) {
   touchUI = setupTouch(input);
   document.getElementById('controls-desktop').classList.add('hidden');
   document.getElementById('controls-touch').classList.remove('hidden');
+  document.getElementById('options-touch').classList.remove('hidden');
   document.getElementById('paused-hint').textContent = 'Tap to resume';
+
+  // Stick / look flip options, remembered on this device.
+  for (const [id, key] of [
+    ['opt-invert-y', 'invertY'],
+    ['opt-invert-x', 'invertX'],
+    ['opt-invert-look', 'invertLook'],
+  ]) {
+    const el = document.getElementById(id);
+    let saved = false;
+    try { saved = localStorage.getItem('deadstreet.' + key) === '1'; } catch (_) { /* ignore */ }
+    el.checked = saved;
+    input[key] = saved;
+    el.addEventListener('change', () => {
+      input[key] = el.checked;
+      try { localStorage.setItem('deadstreet.' + key, el.checked ? '1' : '0'); } catch (_) { /* ignore */ }
+    });
+  }
 }
 
 window.addEventListener('resize', () => {
