@@ -184,7 +184,7 @@ export class Player {
 
     /* ---- movement ---- */
     const fwd = new THREE.Vector3(Math.sin(camYaw), 0, Math.cos(camYaw));
-    const right = new THREE.Vector3(fwd.z, 0, -fwd.x);
+    const right = new THREE.Vector3(-fwd.z, 0, fwd.x); // fwd × up = screen right
     const move = new THREE.Vector3();
     if (input.down('KeyW') || input.down('ArrowUp')) move.add(fwd);
     if (input.down('KeyS') || input.down('ArrowDown')) move.sub(fwd);

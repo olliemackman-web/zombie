@@ -214,7 +214,8 @@ class Game {
 
   #gunPos() {
     const f = this.player.forward();
-    const right = new THREE.Vector3(f.z, 0, -f.x);
+    const right = new THREE.Vector3(-f.z, 0, f.x);
+    // Weapons sit in the character's left hand.
     return this.player.aimOrigin().addScaledVector(f, 0.55).addScaledVector(right, -0.2);
   }
 
@@ -323,7 +324,7 @@ class Game {
     const cp = Math.cos(pitch);
     const fwd = new THREE.Vector3(Math.sin(this.camYaw) * cp, Math.sin(pitch), Math.cos(this.camYaw) * cp);
     const flat = new THREE.Vector3(Math.sin(this.camYaw), 0, Math.cos(this.camYaw));
-    const right = new THREE.Vector3(flat.z, 0, -flat.x);
+    const right = new THREE.Vector3(-flat.z, 0, flat.x); // fwd × up = screen right
     const target = p.pos.clone().add(new THREE.Vector3(0, CAM_HEIGHT, 0)).addScaledVector(right, CAM_SHOULDER);
     const want = target.clone().addScaledVector(fwd, -CAM_DIST);
     if (want.y < 0.35) want.y = 0.35;
